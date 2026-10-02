@@ -106,6 +106,7 @@ export default function AdminDashboardPage() {
         const { data: allProfiles, error: employeesError } = await supabase
           .from('profiles')
           .select('*')
+          .neq('role', 'admin')
           .order('full_name', { ascending: true });
 
         if (ignore) return;
@@ -234,8 +235,8 @@ export default function AdminDashboardPage() {
 
     switch (metric) {
       case 'total':
-        title = 'All Staff Members';
-        filtered = employeeRoster.filter((d) => d.employee.status === 'active');
+        title = 'All Employees';
+        filtered = employeeRoster.filter((d) => d.employee.status === 'active' && d.employee.role !== 'admin');
         break;
       case 'present':
         title = 'Present Employees Today';
@@ -315,15 +316,15 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col pb-20 lg:pb-0">
+    <div className="min-h-screen bg-slate-50 flex flex-col pb-24 lg:pb-0 w-full max-w-full overflow-x-hidden">
       <Navbar user={adminUser} />
 
-      <div className="flex flex-1 max-w-7xl w-full mx-auto">
+      <div className="flex flex-1 max-w-7xl w-full mx-auto min-w-0">
         <Sidebar role="admin" />
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 space-y-6">
+        <main className="flex-1 min-w-0 w-full max-w-full p-3 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 overflow-x-hidden">
           {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
             <div>
               <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 uppercase tracking-wider">
                 <Calendar className="w-4 h-4" />
@@ -343,106 +344,106 @@ export default function AdminDashboardPage() {
           </div>
 
           {/* Metric Cards Grid — Clickable to open Modal */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-4">
             <div
-              className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs transition-all duration-200 hover:shadow-md cursor-pointer hover:border-blue-300 group"
+              className="rounded-xl sm:rounded-2xl border border-slate-200/80 bg-white p-3 sm:p-4 shadow-xs transition-all duration-200 hover:shadow-md cursor-pointer hover:border-blue-300 group"
               onClick={() => handleMetricClick('total')}
             >
               <div className="flex items-center justify-between text-slate-500">
-                <span className="text-[11px] font-bold uppercase tracking-wider group-hover:text-blue-600 transition-colors">Total Staff</span>
-                <Users className="w-4 h-4 text-blue-600" />
+                <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider group-hover:text-blue-600 transition-colors">Total Staff</span>
+                <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600" />
               </div>
-              <p className="text-2xl font-black text-slate-900 mt-2">{summary.totalEmployees}</p>
-              <p className="text-[10px] text-slate-400 mt-1 font-medium">Click to view list</p>
+              <p className="text-xl sm:text-2xl font-black text-slate-900 mt-1 sm:mt-2">{summary.totalEmployees}</p>
+              <p className="text-[9px] sm:text-[10px] text-slate-400 mt-0.5 sm:mt-1 font-medium">Click to view list</p>
             </div>
 
             <div
-              className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs transition-all duration-200 hover:shadow-md cursor-pointer hover:border-emerald-300 group"
+              className="rounded-xl sm:rounded-2xl border border-slate-200/80 bg-white p-3 sm:p-4 shadow-xs transition-all duration-200 hover:shadow-md cursor-pointer hover:border-emerald-300 group"
               onClick={() => handleMetricClick('present')}
             >
               <div className="flex items-center justify-between text-slate-500">
-                <span className="text-[11px] font-bold uppercase tracking-wider group-hover:text-emerald-600 transition-colors">Present</span>
-                <UserCheck className="w-4 h-4 text-emerald-600" />
+                <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider group-hover:text-emerald-600 transition-colors">Present</span>
+                <UserCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600" />
               </div>
-              <p className="text-2xl font-black text-emerald-600 mt-2">{summary.presentToday}</p>
-              <p className="text-[10px] text-slate-400 mt-1 font-medium">Click to view list</p>
+              <p className="text-xl sm:text-2xl font-black text-emerald-600 mt-1 sm:mt-2">{summary.presentToday}</p>
+              <p className="text-[9px] sm:text-[10px] text-slate-400 mt-0.5 sm:mt-1 font-medium">Click to view list</p>
             </div>
 
             <div
-              className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs transition-all duration-200 hover:shadow-md cursor-pointer hover:border-sky-300 group"
+              className="rounded-xl sm:rounded-2xl border border-slate-200/80 bg-white p-3 sm:p-4 shadow-xs transition-all duration-200 hover:shadow-md cursor-pointer hover:border-sky-300 group"
               onClick={() => handleMetricClick('working')}
             >
               <div className="flex items-center justify-between text-slate-500">
-                <span className="text-[11px] font-bold uppercase tracking-wider group-hover:text-sky-600 transition-colors">Working</span>
-                <Clock className="w-4 h-4 text-sky-600" />
+                <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider group-hover:text-sky-600 transition-colors">Working</span>
+                <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-sky-600" />
               </div>
-              <p className="text-2xl font-black text-sky-600 mt-2">{summary.currentlyWorking}</p>
-              <p className="text-[10px] text-slate-400 mt-1 font-medium">Click to view list</p>
+              <p className="text-xl sm:text-2xl font-black text-sky-600 mt-1 sm:mt-2">{summary.currentlyWorking}</p>
+              <p className="text-[9px] sm:text-[10px] text-slate-400 mt-0.5 sm:mt-1 font-medium">Click to view list</p>
             </div>
 
             <div
-              className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs transition-all duration-200 hover:shadow-md cursor-pointer hover:border-amber-300 group"
+              className="rounded-xl sm:rounded-2xl border border-slate-200/80 bg-white p-3 sm:p-4 shadow-xs transition-all duration-200 hover:shadow-md cursor-pointer hover:border-amber-300 group"
               onClick={() => handleMetricClick('late')}
             >
               <div className="flex items-center justify-between text-slate-500">
-                <span className="text-[11px] font-bold uppercase tracking-wider group-hover:text-amber-600 transition-colors">Late</span>
-                <AlertTriangle className="w-4 h-4 text-amber-600" />
+                <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider group-hover:text-amber-600 transition-colors">Late</span>
+                <AlertTriangle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-600" />
               </div>
-              <p className="text-2xl font-black text-amber-600 mt-2">{summary.lateToday}</p>
-              <p className="text-[10px] text-slate-400 mt-1 font-medium">Click to view list</p>
+              <p className="text-xl sm:text-2xl font-black text-amber-600 mt-1 sm:mt-2">{summary.lateToday}</p>
+              <p className="text-[9px] sm:text-[10px] text-slate-400 mt-0.5 sm:mt-1 font-medium">Click to view list</p>
             </div>
 
             <div
-              className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs transition-all duration-200 hover:shadow-md col-span-2 sm:col-span-1 cursor-pointer hover:border-rose-300 group"
+              className="rounded-xl sm:rounded-2xl border border-slate-200/80 bg-white p-3 sm:p-4 shadow-xs transition-all duration-200 hover:shadow-md col-span-2 sm:col-span-1 cursor-pointer hover:border-rose-300 group"
               onClick={() => handleMetricClick('absent')}
             >
               <div className="flex items-center justify-between text-slate-500">
-                <span className="text-[11px] font-bold uppercase tracking-wider group-hover:text-rose-600 transition-colors">Absent</span>
-                <UserX className="w-4 h-4 text-rose-600" />
+                <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider group-hover:text-rose-600 transition-colors">Absent</span>
+                <UserX className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-rose-600" />
               </div>
-              <p className="text-2xl font-black text-rose-600 mt-2">{summary.absentToday}</p>
-              <p className="text-[10px] text-slate-400 mt-1 font-medium">Click to view list</p>
+              <p className="text-xl sm:text-2xl font-black text-rose-600 mt-1 sm:mt-2">{summary.absentToday}</p>
+              <p className="text-[9px] sm:text-[10px] text-slate-400 mt-0.5 sm:mt-1 font-medium">Click to view list</p>
             </div>
           </div>
 
           {/* WFH & Field mini row */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
             <div
-              className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs transition-all duration-200 hover:shadow-md cursor-pointer hover:border-violet-300 group"
+              className="rounded-xl sm:rounded-2xl border border-slate-200/80 bg-white p-3 sm:p-4 shadow-xs transition-all duration-200 hover:shadow-md cursor-pointer hover:border-violet-300 group"
               onClick={() => handleMetricClick('wfh')}
             >
               <div className="flex items-center justify-between text-slate-500">
-                <span className="text-[11px] font-bold uppercase tracking-wider group-hover:text-violet-600 transition-colors">Work From Home (WFH)</span>
-                <Home className="w-4 h-4 text-violet-600" />
+                <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider group-hover:text-violet-600 transition-colors">WFH</span>
+                <Home className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-violet-600" />
               </div>
-              <p className="text-2xl font-black text-violet-600 mt-2">{summary.wfhToday}</p>
-              <p className="text-[10px] text-slate-400 mt-1 font-medium">Click to view list</p>
+              <p className="text-xl sm:text-2xl font-black text-violet-600 mt-1 sm:mt-2">{summary.wfhToday}</p>
+              <p className="text-[9px] sm:text-[10px] text-slate-400 mt-0.5 sm:mt-1 font-medium">Click to view list</p>
             </div>
 
             <div
-              className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs transition-all duration-200 hover:shadow-md cursor-pointer hover:border-teal-300 group"
+              className="rounded-xl sm:rounded-2xl border border-slate-200/80 bg-white p-3 sm:p-4 shadow-xs transition-all duration-200 hover:shadow-md cursor-pointer hover:border-teal-300 group"
               onClick={() => handleMetricClick('field')}
             >
               <div className="flex items-center justify-between text-slate-500">
-                <span className="text-[11px] font-bold uppercase tracking-wider group-hover:text-teal-600 transition-colors">Field Visits</span>
-                <Compass className="w-4 h-4 text-teal-600" />
+                <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider group-hover:text-teal-600 transition-colors">Field Visits</span>
+                <Compass className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-teal-600" />
               </div>
-              <p className="text-2xl font-black text-teal-600 mt-2">{summary.fieldToday}</p>
-              <p className="text-[10px] text-slate-400 mt-1 font-medium">Click to view list</p>
+              <p className="text-xl sm:text-2xl font-black text-teal-600 mt-1 sm:mt-2">{summary.fieldToday}</p>
+              <p className="text-[9px] sm:text-[10px] text-slate-400 mt-0.5 sm:mt-1 font-medium">Click to view list</p>
             </div>
           </div>
 
-          {/* Today's Live Attendance Table with Expandable Session Bifurcation */}
-          <Card className="p-6 space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          {/* Today's Live Attendance Table with Mobile Cards & Desktop Table */}
+          <Card className="p-3.5 sm:p-6 space-y-4 w-full max-w-full overflow-hidden">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
               <div>
-                <h3 className="text-lg font-bold text-slate-900">Today&apos;s Employee Roster</h3>
-                <p className="text-xs text-slate-500">
+                <h3 className="text-base sm:text-lg font-bold text-slate-900">Today&apos;s Employee Roster</h3>
+                <p className="text-[11px] sm:text-xs text-slate-500">
                   Click on an employee to expand and view multiple check-in/out session details
                 </p>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-2.5">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <div className="w-full sm:w-64">
                   <Input
                     placeholder="Search name, code..."
@@ -471,181 +472,322 @@ export default function AdminDashboardPage() {
                 No employees matching criteria.
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs text-slate-600">
-                  <thead className="bg-slate-50 border-b border-slate-200 font-semibold uppercase text-slate-700">
-                    <tr>
-                      <th className="py-3 px-3 w-8"></th>
-                      <th className="py-3 px-3">Employee</th>
-                      <th className="py-3 px-3">Department</th>
-                      <th className="py-3 px-3">Total Time</th>
-                      <th className="py-3 px-3">Sessions Today</th>
-                      <th className="py-3 px-3">Latest Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {filteredRoster.map(({ employee, sessions, totalHoursStr, primaryStatus, latestSession }) => {
-                      const isExpanded = expandedEmpIds.has(employee.id);
-                      const hasSessions = sessions.length > 0;
+              <>
+                {/* Mobile View: Dedicated Responsive Cards (No Horizontal Overflow!) */}
+                <div className="block sm:hidden space-y-2.5">
+                  {filteredRoster.map(({ employee, sessions, totalHoursStr, primaryStatus }) => {
+                    const isExpanded = expandedEmpIds.has(employee.id);
+                    const hasSessions = sessions.length > 0;
 
-                      return (
-                        <React.Fragment key={employee.id}>
-                          <tr
-                            onClick={() => hasSessions && toggleEmpExpand(employee.id)}
-                            className={`transition-colors ${
-                              hasSessions ? 'cursor-pointer hover:bg-slate-50/80' : 'opacity-80'
-                            }`}
-                          >
-                            <td className="py-3 px-3 text-slate-400">
-                              {hasSessions ? (
-                                isExpanded ? (
-                                  <ChevronDown className="w-4 h-4 text-blue-600" />
-                                ) : (
-                                  <ChevronRight className="w-4 h-4 text-slate-400" />
-                                )
-                              ) : (
-                                <span className="w-4 inline-block"></span>
-                              )}
-                            </td>
-                            <td className="py-3 px-3">
-                              <div>
-                                <p className="font-bold text-slate-900">{employee.full_name}</p>
-                                <p className="text-[10px] text-slate-400 font-mono">
-                                  {employee.employee_code || employee.email}
-                                </p>
-                              </div>
-                            </td>
-                            <td className="py-3 px-3 font-medium text-slate-700">
-                              {employee.department || 'General'}
-                            </td>
-                            <td className="py-3 px-3 font-semibold text-slate-900">
-                              {hasSessions ? totalHoursStr : '--'}
-                            </td>
-                            <td className="py-3 px-3">
-                              {hasSessions ? (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-100">
-                                  <Layers className="w-3 h-3 text-blue-500" />
-                                  {sessions.length} session{sessions.length > 1 ? 's' : ''}
-                                </span>
-                              ) : (
-                                <span className="text-[11px] text-slate-400 italic">No check-in</span>
-                              )}
-                            </td>
-                            <td className="py-3 px-3">
-                              {hasSessions ? (
-                                <Badge
-                                  variant={
-                                    primaryStatus === 'working'
-                                      ? 'info'
-                                      : primaryStatus === 'late'
-                                      ? 'warning'
-                                      : 'success'
-                                  }
-                                  className="text-[10px] py-0.5 px-2 capitalize font-semibold"
-                                >
-                                  {primaryStatus === 'working' ? 'Working Now' : primaryStatus}
-                                </Badge>
-                              ) : (
-                                <Badge variant="neutral" className="text-[10px] py-0.5 px-2 font-semibold">
-                                  Absent
-                                </Badge>
-                              )}
-                            </td>
-                          </tr>
+                    return (
+                      <div
+                        key={employee.id}
+                        className="rounded-xl border border-slate-200 bg-white p-3 space-y-2.5 transition-all shadow-2xs"
+                      >
+                        <div
+                          onClick={() => hasSessions && toggleEmpExpand(employee.id)}
+                          className={`flex items-start justify-between gap-2 ${hasSessions ? 'cursor-pointer' : ''}`}
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-700 text-xs font-bold">
+                              {employee.full_name?.charAt(0) || 'E'}
+                            </div>
+                            <div className="min-w-0">
+                              <p className="font-bold text-slate-900 text-xs truncate">{employee.full_name}</p>
+                              <p className="text-[10px] text-slate-400 font-mono truncate">
+                                {employee.employee_code || employee.email}
+                              </p>
+                            </div>
+                          </div>
 
-                          {/* Bifurcation Sub-Table when employee row is clicked */}
-                          {isExpanded && hasSessions && (
-                            <tr>
-                              <td colSpan={6} className="p-0 bg-slate-50/70 border-y border-slate-200">
-                                <div className="p-3.5 pl-10 space-y-2">
-                                  <p className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                                    <Clock className="w-3.5 h-3.5 text-blue-600" />
-                                    Sessions for {employee.full_name} ({sessions.length} recorded today)
-                                  </p>
-                                  <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-xs">
-                                    <table className="w-full text-left text-xs">
-                                      <thead className="bg-slate-100/70 text-slate-600 font-semibold uppercase text-[10px] border-b border-slate-200">
-                                        <tr>
-                                          <th className="py-2.5 px-3">#</th>
-                                          <th className="py-2.5 px-3">Check In</th>
-                                          <th className="py-2.5 px-3">Check Out</th>
-                                          <th className="py-2.5 px-3">Duration</th>
-                                          <th className="py-2.5 px-3">Type</th>
-                                          <th className="py-2.5 px-3">Location / GPS</th>
-                                          <th className="py-2.5 px-3">Notes</th>
-                                          <th className="py-2.5 px-3">Status</th>
-                                        </tr>
-                                      </thead>
-                                      <tbody className="divide-y divide-slate-100 text-slate-700">
-                                        {sessions.map((s, idx) => {
-                                          const dur = calculateWorkingHours(s.check_in_time, s.check_out_time);
-                                          return (
-                                            <tr key={s.id} className="hover:bg-slate-50/60">
-                                              <td className="py-2.5 px-3 font-mono text-slate-400">{idx + 1}</td>
-                                              <td className="py-2.5 px-3 font-semibold text-slate-900 font-mono">
-                                                {formatTime(s.check_in_time)}
-                                              </td>
-                                              <td className="py-2.5 px-3 font-semibold text-slate-900 font-mono">
-                                                {s.check_out_time ? (
-                                                  formatTime(s.check_out_time)
-                                                ) : (
-                                                  <span className="text-amber-600 font-bold">In Progress</span>
-                                                )}
-                                              </td>
-                                              <td className="py-2.5 px-3 font-medium text-blue-600">
-                                                {dur.formatted}
-                                              </td>
-                                              <td className="py-2.5 px-3 capitalize font-medium">
-                                                {s.attendance_type.replace(/_/g, ' ')}
-                                              </td>
-                                              <td className="py-2.5 px-3">
-                                                {s.check_in_latitude && s.check_in_longitude ? (
-                                                  <a
-                                                    href={getGoogleMapsUrl(s.check_in_latitude, s.check_in_longitude)}
-                                                    target="_blank"
-                                                    rel="noreferrer"
-                                                    className="text-blue-600 hover:underline flex items-center gap-1 font-semibold text-[11px]"
-                                                  >
-                                                    <MapPin className="w-3 h-3 text-blue-500" />
-                                                    {Number(s.check_in_latitude).toFixed(3)}, {Number(s.check_in_longitude).toFixed(3)}
-                                                  </a>
-                                                ) : (
-                                                  <span className="text-slate-400 text-[10px]">No GPS</span>
-                                                )}
-                                              </td>
-                                              <td className="py-2.5 px-3 text-slate-600 italic text-[11px]">
-                                                {s.field_notes || s.wfh_reason || '--'}
-                                              </td>
-                                              <td className="py-2.5 px-3">
-                                                <Badge
-                                                  variant={
-                                                    s.status === 'present'
-                                                      ? 'success'
-                                                      : s.status === 'late'
-                                                      ? 'warning'
-                                                      : 'danger'
-                                                  }
-                                                  className="text-[10px] py-0 px-2"
-                                                >
-                                                  {s.status}
-                                                </Badge>
-                                              </td>
-                                            </tr>
-                                          );
-                                        })}
-                                      </tbody>
-                                    </table>
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <Badge
+                              variant={
+                                primaryStatus === 'working'
+                                  ? 'info'
+                                  : primaryStatus === 'late'
+                                  ? 'warning'
+                                  : primaryStatus === 'present'
+                                  ? 'success'
+                                  : 'neutral'
+                              }
+                              className="text-[9px] py-0.5 px-1.5 capitalize font-semibold"
+                            >
+                              {primaryStatus === 'working' ? 'Working Now' : primaryStatus}
+                            </Badge>
+                            {hasSessions && (
+                              isExpanded ? (
+                                <ChevronDown className="w-3.5 h-3.5 text-blue-600" />
+                              ) : (
+                                <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                              )
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between text-[11px] text-slate-600 border-t border-slate-100 pt-2">
+                          <span className="text-slate-500 font-medium">
+                            {employee.department || 'General'}
+                          </span>
+                          <span className="font-semibold text-slate-900">
+                            {hasSessions ? totalHoursStr : '--'}
+                          </span>
+                          {hasSessions ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 text-blue-700">
+                              <Layers className="w-2.5 h-2.5" />
+                              {sessions.length} sess
+                            </span>
+                          ) : (
+                            <span className="text-[10px] text-slate-400 italic">No check-in</span>
+                          )}
+                        </div>
+
+                        {/* Inline Sessions for Mobile */}
+                        {isExpanded && hasSessions && (
+                          <div className="mt-2 pt-2 border-t border-slate-200/80 space-y-2 bg-slate-50 -mx-3 -mb-3 p-3 rounded-b-xl">
+                            <p className="text-[10px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
+                              <Clock className="w-3 h-3 text-blue-600" />
+                              Sessions ({sessions.length})
+                            </p>
+                            <div className="space-y-1.5">
+                              {sessions.map((s, idx) => {
+                                const dur = calculateWorkingHours(s.check_in_time, s.check_out_time);
+                                return (
+                                  <div
+                                    key={s.id}
+                                    className="p-2 bg-white rounded-lg border border-slate-200/90 text-[11px] space-y-1"
+                                  >
+                                    <div className="flex items-center justify-between">
+                                      <span className="font-bold text-slate-800 font-mono">
+                                        Session #{idx + 1}
+                                      </span>
+                                      <Badge
+                                        variant={
+                                          s.status === 'present'
+                                            ? 'success'
+                                            : s.status === 'late'
+                                            ? 'warning'
+                                            : 'danger'
+                                        }
+                                        className="text-[9px] py-0 px-1.5"
+                                      >
+                                        {s.status}
+                                      </Badge>
+                                    </div>
+                                    <div className="flex items-center justify-between text-[10px] text-slate-600 font-mono">
+                                      <span>In: {formatTime(s.check_in_time)}</span>
+                                      <span>
+                                        Out: {s.check_out_time ? formatTime(s.check_out_time) : (
+                                          <span className="text-amber-600 font-bold">Working</span>
+                                        )}
+                                      </span>
+                                      <span className="text-blue-600 font-bold">{dur.formatted}</span>
+                                    </div>
+                                    <div className="flex items-center justify-between text-[10px] pt-0.5 border-t border-slate-100">
+                                      <span className="capitalize text-slate-500 font-medium">
+                                        {s.attendance_type.replace(/_/g, ' ')}
+                                      </span>
+                                      {s.check_in_latitude && s.check_in_longitude ? (
+                                        <a
+                                          href={getGoogleMapsUrl(s.check_in_latitude, s.check_in_longitude)}
+                                          target="_blank"
+                                          rel="noreferrer"
+                                          className="text-blue-600 hover:underline flex items-center gap-0.5 font-semibold text-[10px]"
+                                        >
+                                          <MapPin className="w-2.5 h-2.5 text-blue-500" /> View GPS
+                                        </a>
+                                      ) : (
+                                        <span className="text-slate-400 text-[10px]">No GPS</span>
+                                      )}
+                                    </div>
                                   </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Desktop View: Full Data Table (Hidden on Mobile) */}
+                <div className="hidden sm:block overflow-x-auto min-w-0">
+                  <table className="w-full text-left text-xs text-slate-600">
+                    <thead className="bg-slate-50 border-b border-slate-200 font-semibold uppercase text-slate-700">
+                      <tr>
+                        <th className="py-3 px-3 w-8"></th>
+                        <th className="py-3 px-3">Employee</th>
+                        <th className="py-3 px-3">Department</th>
+                        <th className="py-3 px-3">Total Time</th>
+                        <th className="py-3 px-3">Sessions Today</th>
+                        <th className="py-3 px-3">Latest Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {filteredRoster.map(({ employee, sessions, totalHoursStr, primaryStatus }) => {
+                        const isExpanded = expandedEmpIds.has(employee.id);
+                        const hasSessions = sessions.length > 0;
+
+                        return (
+                          <React.Fragment key={employee.id}>
+                            <tr
+                              onClick={() => hasSessions && toggleEmpExpand(employee.id)}
+                              className={`transition-colors ${
+                                hasSessions ? 'cursor-pointer hover:bg-slate-50/80' : 'opacity-80'
+                              }`}
+                            >
+                              <td className="py-3 px-3 text-slate-400">
+                                {hasSessions ? (
+                                  isExpanded ? (
+                                    <ChevronDown className="w-4 h-4 text-blue-600" />
+                                  ) : (
+                                    <ChevronRight className="w-4 h-4 text-slate-400" />
+                                  )
+                                ) : (
+                                  <span className="w-4 inline-block"></span>
+                                )}
+                              </td>
+                              <td className="py-3 px-3">
+                                <div>
+                                  <p className="font-bold text-slate-900">{employee.full_name}</p>
+                                  <p className="text-[10px] text-slate-400 font-mono">
+                                    {employee.employee_code || employee.email}
+                                  </p>
                                 </div>
                               </td>
+                              <td className="py-3 px-3 font-medium text-slate-700">
+                                {employee.department || 'General'}
+                              </td>
+                              <td className="py-3 px-3 font-semibold text-slate-900">
+                                {hasSessions ? totalHoursStr : '--'}
+                              </td>
+                              <td className="py-3 px-3">
+                                {hasSessions ? (
+                                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-100">
+                                    <Layers className="w-3 h-3 text-blue-500" />
+                                    {sessions.length} session{sessions.length > 1 ? 's' : ''}
+                                  </span>
+                                ) : (
+                                  <span className="text-[11px] text-slate-400 italic">No check-in</span>
+                                )}
+                              </td>
+                              <td className="py-3 px-3">
+                                {hasSessions ? (
+                                  <Badge
+                                    variant={
+                                      primaryStatus === 'working'
+                                        ? 'info'
+                                        : primaryStatus === 'late'
+                                        ? 'warning'
+                                        : 'success'
+                                    }
+                                    className="text-[10px] py-0.5 px-2 capitalize font-semibold"
+                                  >
+                                    {primaryStatus === 'working' ? 'Working Now' : primaryStatus}
+                                  </Badge>
+                                ) : (
+                                  <Badge variant="neutral" className="text-[10px] py-0.5 px-2 font-semibold">
+                                    Absent
+                                  </Badge>
+                                )}
+                              </td>
                             </tr>
-                          )}
-                        </React.Fragment>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
+
+                            {/* Bifurcation Sub-Table when employee row is clicked */}
+                            {isExpanded && hasSessions && (
+                              <tr>
+                                <td colSpan={6} className="p-0 bg-slate-50/70 border-y border-slate-200">
+                                  <div className="p-3.5 pl-10 space-y-2">
+                                    <p className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                                      <Clock className="w-3.5 h-3.5 text-blue-600" />
+                                      Sessions for {employee.full_name} ({sessions.length} recorded today)
+                                    </p>
+                                    <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-xs">
+                                      <table className="w-full text-left text-xs">
+                                        <thead className="bg-slate-100/70 text-slate-600 font-semibold uppercase text-[10px] border-b border-slate-200">
+                                          <tr>
+                                            <th className="py-2.5 px-3">#</th>
+                                            <th className="py-2.5 px-3">Check In</th>
+                                            <th className="py-2.5 px-3">Check Out</th>
+                                            <th className="py-2.5 px-3">Duration</th>
+                                            <th className="py-2.5 px-3">Type</th>
+                                            <th className="py-2.5 px-3">Location / GPS</th>
+                                            <th className="py-2.5 px-3">Notes</th>
+                                            <th className="py-2.5 px-3">Status</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-100 text-slate-700">
+                                          {sessions.map((s, idx) => {
+                                            const dur = calculateWorkingHours(s.check_in_time, s.check_out_time);
+                                            return (
+                                              <tr key={s.id} className="hover:bg-slate-50/60">
+                                                <td className="py-2.5 px-3 font-mono text-slate-400">{idx + 1}</td>
+                                                <td className="py-2.5 px-3 font-semibold text-slate-900 font-mono">
+                                                  {formatTime(s.check_in_time)}
+                                                </td>
+                                                <td className="py-2.5 px-3 font-semibold text-slate-900 font-mono">
+                                                  {s.check_out_time ? (
+                                                    formatTime(s.check_out_time)
+                                                  ) : (
+                                                    <span className="text-amber-600 font-bold">In Progress</span>
+                                                  )}
+                                                </td>
+                                                <td className="py-2.5 px-3 font-medium text-blue-600">
+                                                  {dur.formatted}
+                                                </td>
+                                                <td className="py-2.5 px-3 capitalize font-medium">
+                                                  {s.attendance_type.replace(/_/g, ' ')}
+                                                </td>
+                                                <td className="py-2.5 px-3">
+                                                  {s.check_in_latitude && s.check_in_longitude ? (
+                                                    <a
+                                                      href={getGoogleMapsUrl(s.check_in_latitude, s.check_in_longitude)}
+                                                      target="_blank"
+                                                      rel="noreferrer"
+                                                      className="text-blue-600 hover:underline flex items-center gap-1 font-semibold text-[11px]"
+                                                    >
+                                                      <MapPin className="w-3 h-3 text-blue-500" />
+                                                      {Number(s.check_in_latitude).toFixed(3)}, {Number(s.check_in_longitude).toFixed(3)}
+                                                    </a>
+                                                  ) : (
+                                                    <span className="text-slate-400 text-[10px]">No GPS</span>
+                                                  )}
+                                                </td>
+                                                <td className="py-2.5 px-3 text-slate-600 italic text-[11px]">
+                                                  {s.field_notes || s.wfh_reason || '--'}
+                                                </td>
+                                                <td className="py-2.5 px-3">
+                                                  <Badge
+                                                    variant={
+                                                      s.status === 'present'
+                                                        ? 'success'
+                                                        : s.status === 'late'
+                                                        ? 'warning'
+                                                        : 'danger'
+                                                    }
+                                                    className="text-[10px] py-0 px-2"
+                                                  >
+                                                    {s.status}
+                                                  </Badge>
+                                                </td>
+                                              </tr>
+                                            );
+                                          })}
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                  </div>
+                                </td>
+                              </tr>
+                            )}
+                          </React.Fragment>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </>
             )}
           </Card>
         </main>

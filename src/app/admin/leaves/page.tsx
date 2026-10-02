@@ -118,13 +118,13 @@ export default function AdminLeavesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col pb-20 lg:pb-0">
+    <div className="min-h-screen bg-slate-50 flex flex-col pb-24 lg:pb-0 w-full max-w-full overflow-x-hidden">
       <Navbar user={adminUser} />
 
-      <div className="flex flex-1 max-w-7xl w-full mx-auto">
+      <div className="flex flex-1 max-w-7xl w-full mx-auto min-w-0">
         <Sidebar role="admin" />
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 space-y-6">
+        <main className="flex-1 min-w-0 w-full max-w-full p-3 sm:p-6 lg:p-8 space-y-5 overflow-x-hidden">
           <div>
             <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
               <Calendar className="w-6 h-6 text-blue-600" /> Leave Management

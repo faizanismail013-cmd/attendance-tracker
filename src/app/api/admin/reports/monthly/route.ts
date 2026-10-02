@@ -31,11 +31,12 @@ export async function GET(request: Request) {
     const lastDay = new Date(year, month, 0).getDate();
     const endDate = `${year}-${month.toString().padStart(2, '0')}-${lastDay.toString().padStart(2, '0')}`;
 
-    // 1. Fetch all active employees
+    // 1. Fetch all active employees (excluding administrators)
     const { data: employees, error: empErr } = await supabase
       .from('profiles')
       .select('id, full_name, email, department, role, status')
       .eq('status', 'active')
+      .neq('role', 'admin')
       .order('full_name');
 
     if (empErr) throw empErr;

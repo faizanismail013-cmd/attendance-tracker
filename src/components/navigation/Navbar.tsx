@@ -31,16 +31,18 @@ export const Navbar: React.FC<NavbarProps> = ({ user }) => {
   const isAdmin = user?.role === 'admin';
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/95 backdrop-blur-xs">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-40 w-full max-w-full overflow-hidden border-b border-slate-200 bg-white/95 backdrop-blur-xs">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-3 sm:px-6 lg:px-8">
         {/* Brand Logo */}
-        <Link href={isAdmin ? '/admin/dashboard' : '/dashboard'} className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20">
-            <Clock className="h-5 w-5" />
+        <Link href={isAdmin ? '/admin/dashboard' : '/dashboard'} className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+          <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20">
+            <Clock className="h-4 w-4 sm:h-5 sm:w-5" />
           </div>
-          <div>
-            <span className="text-base font-bold text-slate-900 tracking-tight">PPR Attendance Tracker</span>
-            <span className="block text-[10px] font-semibold text-blue-600 uppercase tracking-wider">
+          <div className="min-w-0">
+            <span className="text-sm sm:text-base font-bold text-slate-900 tracking-tight block truncate">
+              PPR Attendance Tracker
+            </span>
+            <span className="block text-[9px] sm:text-[10px] font-semibold text-blue-600 uppercase tracking-wider truncate">
               Field &amp; Office Portal
             </span>
           </div>

@@ -28,6 +28,7 @@ export async function GET() {
     const { data: employees, error } = await supabase
       .from('profiles')
       .select('*')
+      .neq('role', 'admin')
       .order('created_at', { ascending: false });
 
     if (error) throw error;

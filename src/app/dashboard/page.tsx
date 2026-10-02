@@ -389,13 +389,13 @@ export default function EmployeeDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col pb-20 lg:pb-0">
+    <div className="min-h-screen bg-slate-50 flex flex-col pb-24 lg:pb-0 w-full max-w-full overflow-x-hidden">
       <Navbar user={userProfile} />
 
-      <div className="flex flex-1 max-w-7xl w-full mx-auto">
+      <div className="flex flex-1 max-w-7xl w-full mx-auto min-w-0">
         <Sidebar role={userProfile?.role} />
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 space-y-6">
+        <main className="flex-1 min-w-0 w-full max-w-full p-3 sm:p-6 lg:p-8 space-y-5 overflow-x-hidden">
           {/* Welcome Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg shadow-blue-500/10">
             <div>
