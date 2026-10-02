@@ -98,6 +98,55 @@ export async function POST(request: Request) {
     });
 
     if (createAuthError) {
+      if (
+        createAuthError.message.toLowerCase().includes('already') ||
+        createAuthError.message.toLowerCase().includes('registered') ||
+        createAuthError.message.toLowerCase().includes('exists')
+      ) {
+        // Find existing user in auth
+        const { data: listData } = await adminSupabase.auth.admin.listUsers();
+        const existing = listData?.users?.find(
+          (u) => u.email?.toLowerCase() === email.toLowerCase()
+        );
+
+        if (existing) {
+          // Update their password and metadata
+          await adminSupabase.auth.admin.updateUserById(existing.id, {
+            password,
+            user_metadata: {
+              full_name,
+              role,
+              employee_code,
+              department,
+              must_change_password: true,
+            },
+          });
+
+          // Re-create or update profile
+          const { data: profile, error: profileError } = await adminSupabase
+            .from('profiles')
+            .upsert({
+              id: existing.id,
+              full_name,
+              email,
+              phone: phone || null,
+              role,
+              employee_code: employee_code || `EMP-${existing.id.substring(0, 6)}`,
+              department: department || 'General',
+              joining_date: joining_date || new Date().toISOString().split('T')[0],
+              status: 'active',
+            })
+            .select()
+            .single();
+
+          if (profileError) {
+            return NextResponse.json({ error: profileError.message }, { status: 500 });
+          }
+
+          return NextResponse.json({ employee: profile }, { status: 201 });
+        }
+      }
+
       return NextResponse.json({ error: createAuthError.message }, { status: 400 });
     }
 

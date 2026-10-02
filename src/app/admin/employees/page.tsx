@@ -28,6 +28,7 @@ import {
   Calendar,
   Lock,
   Hash,
+  Trash2,
 } from 'lucide-react';
 
 export default function AdminEmployeesPage() {
@@ -246,6 +247,37 @@ export default function AdminEmployeesPage() {
     }
   };
 
+  // Delete Employee completely (from Auth + Profiles)
+  const handleDeleteEmployee = async (emp: Profile) => {
+    if (!confirm(`Are you sure you want to completely delete ${emp.full_name}? This will remove their user credentials and attendance records permanently.`)) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/admin/employees/${emp.id}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to delete employee');
+
+      setToast({
+        id: Date.now().toString(),
+        type: 'success',
+        title: 'Employee Deleted',
+        description: `${emp.full_name} was removed completely from the system.`,
+      });
+      setRefreshTrigger((p) => p + 1);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Failed to delete employee';
+      setToast({
+        id: Date.now().toString(),
+        type: 'error',
+        title: 'Delete Failed',
+        description: msg,
+      });
+    }
+  };
+
   const filteredEmployees = employees.filter(
     (e) =>
       e.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -375,6 +407,16 @@ export default function AdminEmployeesPage() {
                         >
                           {emp.status === 'active' ? 'Deactivate' : 'Activate'}
                         </Button>
+                        {emp.role !== 'admin' && (
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            onClick={() => handleDeleteEmployee(emp)}
+                            leftIcon={<Trash2 className="w-3 h-3" />}
+                          >
+                            Delete
+                          </Button>
+                        )}
                       </td>
                     </tr>
                   ))}
