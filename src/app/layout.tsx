@@ -30,8 +30,15 @@ export const metadata: Metadata = {
     title: "PPR Attendance Tracker",
   },
   icons: {
-    icon: "/favicon.ico",
-    apple: "/icons/icon-192.svg",
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/favicon.png", sizes: "32x32", type: "image/png" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [
+      { url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
   },
 };
 
@@ -47,7 +54,12 @@ export default function RootLayout({
     >
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <link rel="apple-touch-icon" href="/icons/icon-192.svg" />
+        <link rel="icon" href="/favicon.png" type="image/png" sizes="32x32" />
+        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" sizes="180x180" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="theme-color" content="#2563eb" />
       </head>
       <body className="min-h-full flex flex-col bg-slate-50 text-slate-900">
         {children}
@@ -56,7 +68,7 @@ export default function RootLayout({
             __html: `
               if ('serviceWorker' in navigator) {
                 window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js').catch(function(err) {
+                  navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(function(err) {
                     console.log('ServiceWorker registration failed: ', err);
                   });
                 });
@@ -68,3 +80,4 @@ export default function RootLayout({
     </html>
   );
 }
+
