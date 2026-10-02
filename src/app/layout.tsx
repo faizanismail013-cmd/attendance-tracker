@@ -21,13 +21,13 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "PulseAttendance | Enterprise Hub",
+  title: "PPR Attendance Tracker",
   description: "Enterprise Employee Portal, Mobile Attendance Tracker & GPS Geofencing",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "PulseAttendance",
+    title: "PPR Attendance Tracker",
   },
   icons: {
     icon: "/favicon.ico",

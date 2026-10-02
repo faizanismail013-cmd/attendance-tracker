@@ -1,6 +1,6 @@
 {
-  "name": "PulseAttendance Enterprise Hub",
-  "short_name": "PulseAttendance",
+  "name": "PPR Attendance Tracker",
+  "short_name": "PPR Tracker",
   "description": "Enterprise Employee Portal & GPS Attendance Tracker",
   "start_url": "/dashboard",
   "display": "standalone",

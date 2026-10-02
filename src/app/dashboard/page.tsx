@@ -15,6 +15,8 @@ import { Badge } from '@/components/ui/Badge';
 import { LoadingState } from '@/components/ui/LoadingState';
 import { ErrorState } from '@/components/ui/ErrorState';
 import { Toast, ToastMessage } from '@/components/ui/Toast';
+import { Modal } from '@/components/ui/Modal';
+import { Input } from '@/components/ui/Input';
 import {
   MapPin,
   Clock,
@@ -63,6 +65,13 @@ export default function EmployeeDashboardPage() {
   // Expandable date rows in history
   const [expandedDates, setExpandedDates] = useState<Set<string>>(new Set());
 
+  // Forced password change state
+  const [mustChangePassword, setMustChangePassword] = useState(false);
+  const [newPasswordVal, setNewPasswordVal] = useState('');
+  const [confirmPasswordVal, setConfirmPasswordVal] = useState('');
+  const [passError, setPassError] = useState<string | null>(null);
+  const [isSavingPass, setIsSavingPass] = useState(false);
+
   useEffect(() => {
     let ignore = false;
     async function fetchDashboard() {
@@ -78,6 +87,10 @@ export default function EmployeeDashboardPage() {
         if (authError || !user) {
           router.push('/login');
           return;
+        }
+
+        if (user.user_metadata?.must_change_password) {
+          setMustChangePassword(true);
         }
 
         const { data: profile, error: profileError } = await supabase
@@ -784,6 +797,85 @@ export default function EmployeeDashboardPage() {
 
       <MobileNav role={userProfile?.role} />
       <Toast toast={toast} onClose={() => setToast(null)} />
+
+      {/* Mandatory Password Change Modal */}
+      {mustChangePassword && (
+        <Modal
+          isOpen={mustChangePassword}
+          onClose={() => {}} // Non-dismissible until password changed
+          title="Security Update: Set Your Password"
+          description="You are logging in with a default or temporary password. Please set your permanent secure password to continue."
+        >
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              setPassError(null);
+              if (!newPasswordVal || newPasswordVal.length < 6) {
+                setPassError('Password must be at least 6 characters long.');
+                return;
+              }
+              if (newPasswordVal !== confirmPasswordVal) {
+                setPassError('Passwords do not match. Please re-enter.');
+                return;
+              }
+              setIsSavingPass(true);
+              try {
+                const { error: upErr } = await supabase.auth.updateUser({
+                  password: newPasswordVal,
+                  data: { must_change_password: false },
+                });
+                if (upErr) throw upErr;
+                setMustChangePassword(false);
+                setToast({
+                  id: Date.now().toString(),
+                  type: 'success',
+                  title: 'Password Updated',
+                  description: 'Your permanent password has been set successfully.',
+                });
+              } catch (err: any) {
+                setPassError(err?.message || 'Failed to update password.');
+              } finally {
+                setIsSavingPass(false);
+              }
+            }}
+            className="space-y-4 pt-2"
+          >
+            {passError && (
+              <div className="p-3 bg-rose-50 text-rose-700 border border-rose-200 text-xs rounded-lg font-medium">
+                {passError}
+              </div>
+            )}
+
+            <Input
+              label="New Password *"
+              type="password"
+              placeholder="At least 6 characters"
+              value={newPasswordVal}
+              onChange={(e) => setNewPasswordVal(e.target.value)}
+              required
+            />
+
+            <Input
+              label="Confirm New Password *"
+              type="password"
+              placeholder="Re-type new password"
+              value={confirmPasswordVal}
+              onChange={(e) => setConfirmPasswordVal(e.target.value)}
+              required
+            />
+
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              className="w-full font-bold shadow-md shadow-blue-500/20"
+              isLoading={isSavingPass}
+            >
+              Update Password &amp; Proceed
+            </Button>
+          </form>
+        </Modal>
+      )}
     </div>
   );
 }

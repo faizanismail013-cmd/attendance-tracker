@@ -93,6 +93,7 @@ export async function POST(request: Request) {
         role,
         employee_code,
         department,
+        must_change_password: true,
       },
     });
 

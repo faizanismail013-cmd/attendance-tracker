@@ -45,60 +45,155 @@ export async function GET(request: Request) {
       .from('attendance')
       .select('*')
       .gte('attendance_date', startDate)
-      .lte('attendance_date', endDate);
+      .lte('attendance_date', endDate)
+      .order('check_in_time', { ascending: true });
 
     if (attErr) throw attErr;
 
     // 3. Fetch approved leaves for this month
-    const { data: leaves, error: leaveErr } = await supabase
-      .from('leave_requests')
-      .select('*')
-      .eq('status', 'approved')
-      .lte('start_date', endDate)
-      .gte('end_date', startDate);
+    let leaves: any[] = [];
+    try {
+      const { data: leaveData } = await supabase
+        .from('leave_requests')
+        .select('*')
+        .eq('status', 'approved')
+        .lte('start_date', endDate)
+        .gte('end_date', startDate);
+      leaves = leaveData || [];
+    } catch {
+      leaves = [];
+    }
 
-    if (leaveErr) throw leaveErr;
+    const todayStr = new Date().toISOString().split('T')[0];
 
     // Aggregate monthly report per employee
-    const summaries = employees.map((emp) => {
+    const summaries = (employees || []).map((emp) => {
       const empAttendance = (records || []).filter((r) => r.employee_id === emp.id);
       const empLeaves = (leaves || []).filter((l) => l.employee_id === emp.id);
 
-      const present_days = empAttendance.filter((r) => r.status === 'present').length;
-      const late_days = empAttendance.filter((r) => r.status === 'late').length;
+      // Group sessions by date
+      const dateMap = new Map<string, any[]>();
+      empAttendance.forEach((r) => {
+        const existing = dateMap.get(r.attendance_date) || [];
+        existing.push(r);
+        dateMap.set(r.attendance_date, existing);
+      });
 
-      const office_days = empAttendance.filter((r) => r.attendance_type === 'office').length;
-      const field_days = empAttendance.filter((r) => r.attendance_type === 'field').length;
-      const wfh_days = empAttendance.filter((r) => r.attendance_type === 'work_from_home').length;
+      // Unique present dates
+      const uniquePresentDates = Array.from(dateMap.keys());
+      const total_present = uniquePresentDates.length;
 
-      let leave_days = 0;
+      let late_days = 0;
+      let office_days = 0;
+      let field_days = 0;
+      let wfh_days = 0;
+      let total_hours = 0;
+
+      dateMap.forEach((daySessions) => {
+        // Late if any session or first session was marked late
+        if (daySessions.some((s) => s.status === 'late')) {
+          late_days++;
+        }
+        if (daySessions.some((s) => s.attendance_type === 'office')) {
+          office_days++;
+        }
+        if (daySessions.some((s) => s.attendance_type === 'field')) {
+          field_days++;
+        }
+        if (daySessions.some((s) => s.attendance_type === 'work_from_home')) {
+          wfh_days++;
+        }
+
+        daySessions.forEach((r) => {
+          if (r.check_in_time && r.check_out_time) {
+            const inTime = new Date(r.check_in_time).getTime();
+            const outTime = new Date(r.check_out_time).getTime();
+            total_hours += Math.max(0, (outTime - inTime) / (1000 * 60 * 60));
+          }
+        });
+      });
+
+      // Calculate leave days
+      const leaveDateSet = new Set<string>();
       empLeaves.forEach((l) => {
         const start = new Date(l.start_date);
         const end = new Date(l.end_date);
-        const diffTime = Math.abs(end.getTime() - start.getTime());
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-        leave_days += diffDays;
-      });
-
-      let total_hours = 0;
-      empAttendance.forEach((r) => {
-        if (r.check_in_time && r.check_out_time) {
-          const inTime = new Date(r.check_in_time).getTime();
-          const outTime = new Date(r.check_out_time).getTime();
-          total_hours += Math.max(0, (outTime - inTime) / (1000 * 60 * 60));
+        const cur = new Date(start);
+        while (cur <= end) {
+          const curStr = cur.toISOString().split('T')[0];
+          if (curStr >= startDate && curStr <= endDate) {
+            leaveDateSet.add(curStr);
+          }
+          cur.setDate(cur.getDate() + 1);
         }
       });
+      const leave_days = leaveDateSet.size;
+
+      // Build daily calendar list for each day of the month (1..lastDay)
+      const calendarDays: any[] = [];
+      const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+      for (let day = 1; day <= lastDay; day++) {
+        const dateObj = new Date(year, month - 1, day);
+        const dayStr = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+        const dayOfWeek = dateObj.getDay();
+        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6; // Sunday or Saturday
+        const daySessions = dateMap.get(dayStr) || [];
+        const isLeave = leaveDateSet.has(dayStr);
+        const isFuture = dayStr > todayStr;
+
+        let statusLetter: 'P' | 'A' | 'L' | 'LV' | 'W' | '-' = '-';
+        let statusLabel = 'No Record';
+
+        if (daySessions.length > 0) {
+          const isLate = daySessions.some((s) => s.status === 'late');
+          statusLetter = isLate ? 'L' : 'P';
+          statusLabel = isLate ? 'Late' : 'Present';
+        } else if (isLeave) {
+          statusLetter = 'LV';
+          statusLabel = 'Approved Leave';
+        } else if (isWeekend) {
+          statusLetter = 'W';
+          statusLabel = 'Weekend';
+        } else if (!isFuture) {
+          statusLetter = 'A';
+          statusLabel = 'Absent';
+        } else {
+          statusLetter = '-';
+          statusLabel = 'Upcoming';
+        }
+
+        let dayHours = 0;
+        daySessions.forEach((s) => {
+          if (s.check_in_time && s.check_out_time) {
+            const diff = new Date(s.check_out_time).getTime() - new Date(s.check_in_time).getTime();
+            dayHours += Math.max(0, diff / (1000 * 60 * 60));
+          }
+        });
+
+        calendarDays.push({
+          date: dayStr,
+          dayNumber: day,
+          dayName: dayNames[dayOfWeek],
+          isWeekend,
+          isFuture,
+          statusLetter,
+          statusLabel,
+          sessions: daySessions,
+          workHours: parseFloat(dayHours.toFixed(1)),
+        });
+      }
 
       return {
         employee: emp,
-        total_present: present_days + late_days,
-        present_days,
+        total_present,
         late_days,
         office_days,
         field_days,
         wfh_days,
         leave_days,
         total_work_hours: parseFloat(total_hours.toFixed(1)),
+        calendarDays,
       };
     });
 

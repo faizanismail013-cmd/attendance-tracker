@@ -39,9 +39,9 @@ export const Navbar: React.FC<NavbarProps> = ({ user }) => {
             <Clock className="h-5 w-5" />
           </div>
           <div>
-            <span className="text-base font-bold text-slate-900 tracking-tight">PulseAttendance</span>
-            <span className="block text-[10px] font-medium text-slate-500 uppercase tracking-widest">
-              Enterprise Hub
+            <span className="text-base font-bold text-slate-900 tracking-tight">PPR Attendance Tracker</span>
+            <span className="block text-[10px] font-semibold text-blue-600 uppercase tracking-wider">
+              Field &amp; Office Portal
             </span>
           </div>
         </Link>

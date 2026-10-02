@@ -1,5 +1,5 @@
-// Service Worker for PulseAttendance PWA
-const CACHE_NAME = 'pulse-attendance-v1';
+// Service Worker for PPR Attendance Tracker PWA
+const CACHE_NAME = 'ppr-attendance-v2';
 const ASSETS_TO_CACHE = [
   '/',
   '/manifest.json',

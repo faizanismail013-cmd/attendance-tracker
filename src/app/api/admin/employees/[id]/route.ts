@@ -43,10 +43,11 @@ export async function PATCH(
 
     const adminSupabase = createAdminClient();
 
-    // If password provided, update auth user password
+    // If password provided, update auth user password and flag for mandatory change on login
     if (password && password.trim().length >= 6) {
       await adminSupabase.auth.admin.updateUserById(employeeId, {
         password: password.trim(),
+        user_metadata: { must_change_password: true },
       });
     }
 

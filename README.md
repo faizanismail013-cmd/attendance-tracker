@@ -1,6 +1,6 @@
-# PulseAttendance — Enterprise Employee Portal & Attendance Tracker
+# PPR Attendance Tracker — Enterprise Employee Portal & Attendance System
 
-PulseAttendance is a production-grade, Progressive Web App (PWA) attendance management system built with Next.js 15, TypeScript, Tailwind CSS, and Supabase.
+PPR Attendance Tracker is a production-grade, Progressive Web App (PWA) attendance management system built with Next.js, TypeScript, Tailwind CSS, and Supabase.
 
 It supports high-accuracy GPS verification, office geofencing, field visits, Work From Home (WFH) tracking, attendance correction workflows, leave management, monthly reports with CSV export, audit logging, and role-based access control.
 
