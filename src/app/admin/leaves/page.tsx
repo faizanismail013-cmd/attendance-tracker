@@ -223,21 +223,23 @@ export default function AdminLeavesPage() {
           title="Review Leave Application"
         >
           <div className="space-y-4 pt-2">
-            <div className="bg-slate-50 p-3 rounded-lg border text-xs space-y-1">
-              <p><strong>Employee:</strong> {(selectedLeave.employee || selectedLeave.profiles)?.full_name}</p>
-              <p><strong>Leave Period:</strong> {formatDate(selectedLeave.start_date)} to {formatDate(selectedLeave.end_date)}</p>
-              <p><strong>Type:</strong> <span className="capitalize">{selectedLeave.leave_type}</span></p>
-              <p><strong>Reason:</strong> {selectedLeave.reason}</p>
+            <div className="bg-slate-100 p-3.5 rounded-xl border border-slate-200 text-xs text-slate-900 space-y-1.5 font-medium">
+              <p><strong className="font-bold text-slate-900">Employee:</strong> <span className="text-slate-900">{(selectedLeave.employee || selectedLeave.profiles)?.full_name}</span></p>
+              <p><strong className="font-bold text-slate-900">Leave Period:</strong> <span className="text-slate-900">{formatDate(selectedLeave.start_date)} to {formatDate(selectedLeave.end_date)}</span></p>
+              <p><strong className="font-bold text-slate-900">Type:</strong> <span className="capitalize text-slate-900 font-semibold">{selectedLeave.leave_type}</span></p>
+              <p><strong className="font-bold text-slate-900">Reason:</strong> <span className="text-slate-900">{selectedLeave.reason}</span></p>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Admin Notes (Optional)</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">
+                Admin Notes (Optional)
+              </label>
               <textarea
                 rows={3}
-                placeholder="Notes or reason for approval/rejection..."
+                placeholder="Enter notes or reason for approval / rejection..."
                 value={adminNotes}
                 onChange={(e) => setAdminNotes(e.target.value)}
-                className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3.5 py-2.5 text-sm font-medium text-slate-900 bg-white rounded-lg border border-slate-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 focus:outline-none placeholder:text-slate-400"
               />
             </div>
 

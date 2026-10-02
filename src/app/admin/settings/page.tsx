@@ -212,7 +212,7 @@ export default function AdminSettingsPage() {
                       required
                       value={officeLat}
                       onChange={(e) => setOfficeLat(e.target.value)}
-                      className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3.5 py-2.5 text-sm font-semibold text-slate-900 bg-white rounded-lg border border-slate-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
                     />
                   </div>
 
@@ -226,7 +226,7 @@ export default function AdminSettingsPage() {
                       required
                       value={officeLng}
                       onChange={(e) => setOfficeLng(e.target.value)}
-                      className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3.5 py-2.5 text-sm font-semibold text-slate-900 bg-white rounded-lg border border-slate-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -241,9 +241,9 @@ export default function AdminSettingsPage() {
                       required
                       value={radiusMeters}
                       onChange={(e) => setRadiusMeters(e.target.value)}
-                      className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3.5 py-2.5 text-sm font-semibold text-slate-900 bg-white rounded-lg border border-slate-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
                     />
-                    <p className="text-[10px] text-slate-400 mt-0.5">Default: 100 meters</p>
+                    <p className="text-[10px] text-slate-500 mt-0.5">Default: 100 meters</p>
                   </div>
 
                   <div className="flex flex-col justify-end gap-2">
@@ -307,7 +307,7 @@ export default function AdminSettingsPage() {
                       required
                       value={workingStartTime}
                       onChange={(e) => setWorkingStartTime(e.target.value)}
-                      className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3.5 py-2.5 text-sm font-semibold text-slate-900 bg-white rounded-lg border border-slate-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
                     />
                   </div>
 
@@ -320,7 +320,7 @@ export default function AdminSettingsPage() {
                       required
                       value={workingEndTime}
                       onChange={(e) => setWorkingEndTime(e.target.value)}
-                      className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3.5 py-2.5 text-sm font-semibold text-slate-900 bg-white rounded-lg border border-slate-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
                     />
                   </div>
 
@@ -333,9 +333,9 @@ export default function AdminSettingsPage() {
                       required
                       value={gracePeriodMinutes}
                       onChange={(e) => setGracePeriodMinutes(e.target.value)}
-                      className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3.5 py-2.5 text-sm font-semibold text-slate-900 bg-white rounded-lg border border-slate-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
                     />
-                    <p className="text-[10px] text-slate-400 mt-0.5">Check-ins after grace period are marked Late</p>
+                    <p className="text-[10px] text-slate-500 mt-0.5">Check-ins after grace period are marked Late</p>
                   </div>
                 </div>
               </CardContent>
